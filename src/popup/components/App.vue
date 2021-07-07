@@ -1,8 +1,25 @@
 <template>
     <img alt="Vue logo" src="../../assets/logo.png" />
+    {{ count }}
+    <n-button @click="inc">naive-ui</n-button>
 </template>
 
-<script setup>
+<script>
+import { ref } from "vue";
+
+export default {
+    setup(props) {
+        const count = ref(0);
+        const inc = () => {
+            console.log(1111);
+            count.value++
+        };
+        return {
+            count,
+            inc,
+        }
+    },
+};
 </script>
 
 <style>

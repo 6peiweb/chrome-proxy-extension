@@ -19,13 +19,27 @@
         "default_popup": "./src/popup/index.html"
     },
     "permissions": [
-        "contextMenus",
         "tabs",
-        "notifications",
+        "storage",
         "webRequest",
         "webRequestBlocking",
-        "storage",
         "http://*/*",
         "https://*/*"
-    ]
+    ],
+    "content_scripts": [
+        {
+            "matches": [
+                "<all_urls>"
+            ],
+            "js": [
+                "js/content.js"
+            ],
+            "run_at": "document_start",
+            "all_frames": true
+        }
+    ],
+    "web_accessible_resources": [
+        "js/inject.js"
+    ],
+    "content_security_policy": "script-src 'self' https://apis.google.com; object-src 'self'"
 }
