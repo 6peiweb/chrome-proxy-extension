@@ -8,18 +8,18 @@
 import { ref } from "vue";
 
 export default {
-    setup(props) {
+    setup() {
         const count = ref(0);
         const inc = () => {
-            console.log(1111);
-            count.value++
-        };
+            count.value ++;
+        }
+
         return {
             count,
             inc,
         }
-    },
-};
+    }
+}
 </script>
 
 <style>
