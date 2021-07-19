@@ -1,1 +1,3 @@
 export const CURRENT_PROXY_CONFIG = 'CURRENT_PROXY_CONFIG';
+export const PROXY_STATUS = 'PROXY_STATUS';
+export const CONFIG_LIST = 'CONFIG_LIST';

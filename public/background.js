@@ -1,6 +1,8 @@
 // ** utils/enum
 
 const CURRENT_PROXY_CONFIG = 'CURRENT_PROXY_CONFIG';
+const PROXY_STATUS = 'PROXY_STATUS';
+const CONFIG_LIST = 'CONFIG_LIST';
 
 // ** utils/log
 
@@ -145,11 +147,31 @@ function getStorages(keys) {
     });
 }
 
-function setStorage(key, value) {
+function setStorageList(key, value) {
     return new Promise(resolve => {
         getStorage(key).then(res => {
-            const newValue = value instanceof Object && res instanceof Object ?
-                { ...res, ...value } : value;
+            const newValue = typeof value === 'object' && typeof res === 'object'
+                ? res.find(item => item.key === value.key) ? res.map(item => {
+                    if (item.key === value.key) {
+                        return value;
+                    }
+                    return item;
+                }) : [...res, value]
+                : [value];
+            chrome.storage.sync.set({ [key]: newValue }, () => {
+                log('STORAGE', `set ${key}:${value} successful!!!`);
+                resolve();
+            });
+        });
+    });
+}
+
+function setStorageMap(key, value) {
+    return new Promise(resolve => {
+        getStorage(key).then(res => {
+            const newValue = typeof value === 'object' && typeof res === 'object'
+                ? { ...res, ...value }
+                : value;
             chrome.storage.sync.set({ [key]: newValue }, () => {
                 log('STORAGE', `set ${key}:${value} successful!!!`);
                 resolve();

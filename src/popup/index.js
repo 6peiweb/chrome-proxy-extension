@@ -1,15 +1,56 @@
 import { createApp } from 'vue';
 
-import { create, NButton } from 'naive-ui';
+import {
+  create,
+  NButton,
+  NLayout,
+  NLayoutSider,
+  NMenu,
+  NGradientText,
+  NDropdown,
+  NIcon,
+  NModal,
+  NCard,
+  NInput,
+  NCollapse,
+  NCollapseItem,
+  NForm,
+  NFormItem,
+  NSwitch,
+  NSelect,
+  NCheckbox,
+  NInputNumber,
+} from 'naive-ui';
 
 import App from './components/App.vue';
+import Form from './components/Form.vue';
 
 const app = createApp(App);
 const naive = create({
-    components: [NButton],
+  components: [
+    NButton,
+    NLayout,
+    NLayoutSider,
+    NMenu,
+    NGradientText,
+    NDropdown,
+    NIcon,
+    NModal,
+    NCard,
+    NInput,
+    NCollapse,
+    NCollapseItem,
+    NForm,
+    NFormItem,
+    NSwitch,
+    NSelect,
+    NCheckbox,
+    NInputNumber,
+  ],
 });
 
-app.use(naive)
+app.component('Form', Form);
+app.use(naive);
 app.mount('#app');
 
 /**
@@ -17,17 +58,17 @@ app.mount('#app');
  * @See https://bugs.chromium.org/p/chromium/issues/detail?id=971701
  */
 if (
-    window.screenLeft < 0 ||
-    window.screenTop < 0 ||
-    window.screenLeft > window.screen.width ||
-    window.screenTop > window.screen.height
+  window.screenLeft < 0 ||
+  window.screenTop < 0 ||
+  window.screenLeft > window.screen.width ||
+  window.screenTop > window.screen.height
 ) {
-    chrome.runtime.getPlatformInfo(info => {
-        if (info.os !== 'mac') {
-            return;
-        }
-        const fontFaceSheet = new CSSStyleSheet();
-        fontFaceSheet.insertRule(`
+  chrome.runtime && chrome.runtime.getPlatformInfo(info => {
+    if (info.os !== 'mac') {
+      return;
+    }
+    const fontFaceSheet = new CSSStyleSheet();
+    fontFaceSheet.insertRule(`
               @keyframes redraw {
                 0% {
                   opacity: 1;
@@ -37,11 +78,11 @@ if (
                 }
               }
             `);
-        fontFaceSheet.insertRule(`
+    fontFaceSheet.insertRule(`
               html {
                 animation: redraw 1s linear infinite;
               }
             `);
-        document.adoptedStyleSheets = [...document.adoptedStyleSheets, fontFaceSheet];
-    });
+    document.adoptedStyleSheets = [...document.adoptedStyleSheets, fontFaceSheet];
+  });
 }
