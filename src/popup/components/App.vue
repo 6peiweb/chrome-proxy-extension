@@ -77,7 +77,7 @@
             v-model:value="activeConfig.key"
         />
         <n-switch
-            v-if="expandedProxyList.length"
+            v-if="proxyList.length"
             class="collapse-switch"
             :value="switchValue"
             @update:value="switchValueChange"
@@ -135,7 +135,7 @@
 </template>
 
 <script>
-import { h, ref, computed, onMounted, renderSlot } from "vue";
+import { h, ref, computed, onMounted } from "vue";
 
 import {
     CURRENT_PROXY_CONFIG,
@@ -196,6 +196,7 @@ export default {
         const stopStatusHandler = async () => {
             stopStatus.value = !stopStatus.value;
             await bgJs.setStorageMap(PROXY_STATUS, stopStatus.value);
+            await bgJs.sendMessage();
         };
 
         const activeConfig = ref({});
@@ -211,12 +212,13 @@ export default {
             });
             await initTabs();
             if (config.key === activeConfig.value.key) {
-                const theCurConfig = (menuOptions.value[0] || {});
+                const theCurConfig = menuOptions.value[0] || {};
                 await bgJs.setStorages({
                     [CURRENT_PROXY_CONFIG]: theCurConfig,
                 });
                 activeConfig.value = theCurConfig;
             }
+            await bgJs.sendMessage();
         };
         const initTabs = async () => {
             const configList = await bgJs.getStorage(CONFIG_LIST);
@@ -256,7 +258,7 @@ export default {
             activeConfig.value = currentConfig;
 
             await bgJs.setStorageMap(CURRENT_PROXY_CONFIG, currentConfig);
-
+            await bgJs.sendMessage();
             const menuEle = document.getElementById("n-menu");
             if (menuEle) {
                 menuEle.scrollTo(0, 0);
@@ -342,6 +344,7 @@ export default {
                         value: JSON.stringify(newProxyList),
                     };
                     await updateData(result);
+                    await bgJs.sendMessage();
 
                     setTimeout(() => {
                         const siderContentEle =
@@ -384,6 +387,7 @@ export default {
                 value: JSON.stringify(newProxyList),
             };
             await updateData(result);
+            await bgJs.sendMessage();
         };
 
         onMounted(async () => {
@@ -525,7 +529,12 @@ export default {
     position: absolute;
     top: 5px;
     left: 60px;
+    cursor: pointer;
+}
+
+.n-switch__rail {
     z-index: -1;
+    cursor: pointer;
 }
 
 .n-sider-content {

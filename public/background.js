@@ -20,7 +20,7 @@ function error(type, msg) {
 
 // ** Main
 
-chrome.runtime.onInstalled.addListener(runtimeInfo => {
+chrome.runtime.onInstalled.addListener(async runtimeInfo => {
     log('RUNTIME', JSON.stringify(runtimeInfo));
 
     chrome.tabs.onActiveChanged.addListener(async () => {
@@ -68,6 +68,8 @@ chrome.runtime.onInstalled.addListener(runtimeInfo => {
         { urls: ["<all_urls>"] },
         [],
     );
+
+    await sendMessage();
 });
 
 // ** Status
@@ -84,20 +86,16 @@ function setStatus(status) {
 async function sendMessage() {
     const tabInfo = await getActivedTabs();
     const result = await getStorage(CURRENT_PROXY_CONFIG);
+    const status = await getStorage(PROXY_STATUS);
     chrome.tabs.sendMessage(tabInfo.id, {
         type: CURRENT_PROXY_CONFIG,
-        value: result,
+        value: {
+            ...result,
+            status,
+            rules: JSON.parse(result.value),
+        },
     });
-
-    if (result &&
-        (!result.url
-            || (result.url && tabInfo.url.includes(result.url)))
-    ) {
-        setStatus(true);
-    } else {
-        setStatus(false);
-    }
-
+    setStatus(status);
 }
 
 

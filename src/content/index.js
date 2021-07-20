@@ -20,7 +20,7 @@ function loadScript(url) {
         script.setAttribute('src', scriptSrc);
 
         script.onload = () => {
-            document.documentElement.removeChild(script);
+            // document.documentElement.removeChild(script);
             resolve();
         }
 
@@ -30,5 +30,11 @@ function loadScript(url) {
 
 chrome.runtime.onMessage.addListener(request => {
     window.postMessage(request);
+    const labelStyle = 'background: #606060; color: #fff; border-radius: 3px 0 0 3px; padding: 2px 4px; ';
+    const contentStyle = 'background: #1475B2; color: #fff; border-radius: 0 3px 3px 0; padding: 2px 4px; ';
+    const type = 'Proxy';
+    const msg = ` status(${request.value.status}) ConfigName(${request.value.name}) `;
+    console.info(`%c${type}:%c${msg}`, labelStyle, contentStyle);
+    console.table([...request.value.rules, ...request.value.rules]);
 });
 
