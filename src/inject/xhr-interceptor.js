@@ -6,7 +6,6 @@ const OriginalFetch = window.fetch.bind(window);
 const createXHR = AjaxInterceptor => {
     return class {
         constructor() {
-            this.pageScriptEventDispatched = false;
             this.xhr = new OriginalXHR();
             this.initConfig();
         }
@@ -17,16 +16,32 @@ const createXHR = AjaxInterceptor => {
                 return;
             }
             for (let attr in xhr) {
-                if (['onreadystatechange', 'onload'].includes(attr)) {
-                    xhr[attr] = (...args) => {
-                        if (
-                            (attr === 'onload' && AjaxInterceptor.intercept) ||
-                            (attr === 'onreadystatechange' && this.readyState === 4 && AjaxInterceptor.intercept)
-                        ) {
-                            this.modifyResponse();
-                        }
-                        this[attr] && this[attr].apply(this, args);
-                    }
+                if (attr === 'onreadystatechange') {
+                    Object.defineProperty(this, attr, {
+                        set: (newFn) => this[`_${attr}`] = newFn,
+                        enumerable: true
+                    });
+                    Object.defineProperty(this.xhr, attr, {
+                        get: (...args) => {
+                            if (this.readyState === 4 && AjaxInterceptor.intercept) {
+                                this.modifyResponse();
+                            }
+                            this[`_${attr}`].apply(this, args);
+                        },
+                    });
+                } else if (attr.startsWith('on')) {
+                    Object.defineProperty(this, attr, {
+                        set: (newFn) => this[`_${attr}`] = newFn,
+                        enumerable: true
+                    });
+                    Object.defineProperty(this.xhr, attr, {
+                        get: (...args) => {
+                            if (AjaxInterceptor.intercept) {
+                                this.modifyResponse();
+                            }
+                            this[`_${attr}`].apply(this, args);
+                        },
+                    });
                 } else if (typeof xhr[attr] === 'function') {
                     this[attr] = xhr[attr].bind(xhr);
                 } else {
@@ -94,7 +109,6 @@ const createFetch = AjaxInterceptor => {
 
         function matchRule() {
             const url = getRequestUrl();
-
             let result = undefined;
             if (AjaxInterceptor.rules && AjaxInterceptor.rules.length) {
                 AjaxInterceptor.rules.forEach(rule => {

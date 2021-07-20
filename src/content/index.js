@@ -20,7 +20,7 @@ function loadScript(url) {
         script.setAttribute('src', scriptSrc);
 
         script.onload = () => {
-            // document.documentElement.removeChild(script);
+            document.documentElement.removeChild(script);
             resolve();
         }
 
