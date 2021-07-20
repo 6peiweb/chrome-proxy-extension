@@ -502,6 +502,10 @@ export default {
     max-width: 420px !important;
 }
 
+.n-layout-sider-scroll-container {
+    overflow: hidden !important;
+}
+
 .n-checkbox-margin {
     margin: 0px 10px;
 }
