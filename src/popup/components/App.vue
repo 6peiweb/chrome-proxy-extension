@@ -372,6 +372,7 @@ export default {
                 value: JSON.stringify(newProxyList),
             };
             await updateData(result);
+            await bgJs.sendMessage();
         };
 
         const stopPropagation = (e) => {
@@ -497,6 +498,10 @@ export default {
     }
 }
 
+.n-form-item-blank {
+    max-width: 420px !important;
+}
+
 .n-checkbox-margin {
     margin: 0px 10px;
 }
@@ -547,7 +552,7 @@ export default {
     width: calc(600px - 60px);
     text-align: left;
     overflow-y: scroll;
-    z-index: -1;
+    z-index: -2;
 }
 
 .collapse-item-content {

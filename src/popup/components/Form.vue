@@ -3,6 +3,7 @@
         :model="model"
         label-placement="left"
         size="small"
+        :rules="rules"
         :label-width="100"
         :style="{ maxWidth: '520px' }"
     >
@@ -24,8 +25,9 @@
         <n-form-item label="Response" path="responseText">
             <n-input
                 type="textarea"
-                :autosize="{minRows:4}"
+                :autosize="{ minRows: 4 }"
                 v-model:value="model.responseText"
+                @input="responseTextChange"
             />
         </n-form-item>
     </n-form>
@@ -65,15 +67,41 @@ export default defineComponent({
             }
         };
 
-        watch(
-            model,
-            (value) => context.emit('update', value),
-            { deep: true }
-        );
+        const responseTextChange = () => {
+            try {
+                const result = JSON.stringify(
+                    JSON.parse(model.value.responseText),
+                    null,
+                    4
+                );
+                model.value = {
+                    ...model.value,
+                    responseText: result,
+                };
+            } catch {}
+        };
+        const rules = {
+            responseText: {
+                validator(_, value) {
+                    try {
+                        JSON.parse(value);
+                        return true;
+                    } catch {
+                        return false;
+                    }
+                },
+                trigger: ["input"],
+                message: "Cannot be converted to JSON",
+            },
+        };
+
+        watch(model, (value) => context.emit("update", value), { deep: true });
         return {
+            rules,
             model,
             selectOptions,
             httpStatusChange,
+            responseTextChange,
         };
     },
 });
