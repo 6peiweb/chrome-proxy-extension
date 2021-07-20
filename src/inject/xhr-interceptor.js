@@ -54,7 +54,7 @@ const createXHR = AjaxInterceptor => {
                     let matched = false;
                     if (checked && match && (
                         (filterType === 'normal' && this.responseURL.includes(match)) ||
-                        (filterType === 'regex' && this.responseURL.match(new RegExp(match, 'i')))
+                        (filterType === 'regexp' && this.responseURL.match(new RegExp(match, 'i')))
                     )) {
                         matched = true;
                     }
@@ -63,13 +63,6 @@ const createXHR = AjaxInterceptor => {
                         this.responseText = responseText;
                         this.response = responseText;
                         this.status = httpStatus;
-
-                        if (!this.pageScriptEventDispatched) {
-                            window.dispatchEvent(new CustomEvent('pageScript', {
-                                detail: { url: this.responseURL, match }
-                            }));
-                            this.pageScriptEventDispatched = true;
-                        }
                     }
                 });
             }
@@ -109,15 +102,12 @@ const createFetch = AjaxInterceptor => {
                     let matched = false;
                     if (checked && match && (
                         (filterType === 'normal' && url.includes(match)) ||
-                        (filterType === 'regex' && url.match(new RegExp(match, 'i')))
+                        (filterType === 'regexp' && url.match(new RegExp(match, 'i')))
                     )) {
                         matched = true;
                     }
 
                     if (matched) {
-                        window.dispatchEvent(new CustomEvent('pageScript', {
-                            detail: { url, match }
-                        }));
                         result = { httpStatus, responseText };
                     }
                 });

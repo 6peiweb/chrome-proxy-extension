@@ -4,7 +4,8 @@ import {
     OriginalXHR,
     OriginalFetch,
 } from './xhr-interceptor';
-import { CURRENT_PROXY_CONFIG } from '../utils/enum';
+
+const CURRENT_PROXY_CONFIG = 'CURRENT_PROXY_CONFIG';
 
 window.addEventListener('message', event => {
     const { type, value } = event.data;

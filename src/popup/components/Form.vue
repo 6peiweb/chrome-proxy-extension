@@ -40,8 +40,8 @@ const selectOptions = [
         value: "normal",
     },
     {
-        label: "Regex",
-        value: "regex",
+        label: "Regexp",
+        value: "regexp",
     },
 ];
 

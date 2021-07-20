@@ -334,6 +334,7 @@ export default {
                 value: JSON.stringify(newProxyList),
             };
             await updateData(result);
+            await bgJs.sendMessage();
         };
         const selectHandler = async (type) => {
             switch (type) {

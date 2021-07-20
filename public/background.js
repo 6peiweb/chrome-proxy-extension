@@ -62,9 +62,7 @@ chrome.runtime.onInstalled.addListener(async runtimeInfo => {
     );
 
     chrome.webRequest.onCompleted.addListener(
-        (details) => {
-            // console.log('details', details);
-        },
+        (details) => {},
         { urls: ["<all_urls>"] },
         [],
     );
