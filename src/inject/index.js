@@ -9,7 +9,7 @@ const CURRENT_PROXY_CONFIG = 'CURRENT_PROXY_CONFIG';
 
 window.addEventListener('message', event => {
     const { type, value } = event.data;
-    if (type === CURRENT_PROXY_CONFIG && value) {
+    if (type !== CURRENT_PROXY_CONFIG && value) {
         if (value.status) {
             window.fetch = createFetch(value);
             window.XMLHttpRequest = createXHR(value);

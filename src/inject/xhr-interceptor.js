@@ -21,7 +21,7 @@ const createXHR = (AjaxInterceptor) => {
                         set: (newFn) => (this[`_${attr}`] = newFn),
                         enumerable: true,
                     });
-                    this.xhr.onreadystatechange = (...args) => {
+                    xhr.onreadystatechange = (...args) => {
                         if (this.readyState === 4 && AjaxInterceptor.status) {
                             this.modifyResponse();
                         }
@@ -34,13 +34,19 @@ const createXHR = (AjaxInterceptor) => {
                         set: (newFn) => (this[`_${attr}`] = newFn),
                         enumerable: true,
                     });
-                    this.xhr[attr] = (...args) => {
+                    xhr[attr] = (...args) => {
                         if (AjaxInterceptor.status) {
                             this.modifyResponse();
                         }
                         if (this[`_${attr}`]) {
                             this[`_${attr}`].apply(this, args);
                         }
+                    };
+                } else if (attr === 'open') {
+                    this[attr] = (...args) => {
+                        const url = args[1];
+                        this.REQUEST_URL = /^http/.test(url) ? url : location.origin + url;
+                        xhr[attr].apply(xhr, args);
                     };
                 } else if (typeof xhr[attr] === 'function') {
                     this[attr] = xhr[attr].bind(xhr);
@@ -70,8 +76,8 @@ const createXHR = (AjaxInterceptor) => {
                     if (
                         checked &&
                         match &&
-                        ((filterType === 'normal' && this.xhr.responseURL.includes(match)) ||
-                            (filterType === 'regexp' && this.xhr.responseURL.match(new RegExp(match, 'i'))))
+                        ((filterType === 'normal' && this.REQUEST_URL.includes(match)) ||
+                            (filterType === 'regexp' && this.REQUEST_URL.match(new RegExp(match, 'i'))))
                     ) {
                         matched = true;
                     }
